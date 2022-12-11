@@ -1,10 +1,6 @@
-﻿using Common;
+﻿using BinarySearch.Algorithms;
+using Common;
 using Common.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BinarySearch.SubApp
 {
@@ -19,72 +15,187 @@ namespace BinarySearch.SubApp
             Greet();
 
             ConsoleUtils.Write("Type the text list to be used in search: ");
-            var sampleSize = ConsoleUtils.ReadInteger();
+            var menu = new ConsoleOptionsMenu<string>("Choose an Type to be executed:");
+            menu.AddOption("animals");
+            menu.AddOption("cars");
+            var sampleListName = menu.PickAnOption();
+
+            if (sampleListName == null)
+            {
+                return;
+            }
 
             ConsoleUtils.Write("Type the text to be searched: ");
-            var target = ConsoleUtils.ReadInteger();
+            var target = Console.ReadLine();
 
             ConsoleUtils.JumpLine();
             ConsoleUtils.WriteLine("Initializing sample list...", ConsoleColor.DarkYellow);
-            var textList = new List<string>()
-            {
-                "Cachorro",
-                "Javali",
-                "Gato",
-                "Arara"
-            };
-            //textList = textList.OrderBy(x => x).ToList();
-            var indexedSample = new Dictionary<int, IReadOnlyList<int>>();
+            var textList = GetTextList(sampleListName);
+
+            var index_1 = new List<List<(int LetterCode, int Id)>>();
             for (int i = 0, count = textList.Count; i < count; i++)
             {
-                indexedSample.Add(i, TextHelper.ToNumberList(textList[i]));
+                for (int j = 0, wordSize = textList[i].Length; j < wordSize; j++)
+                {
+                    if (j + 1 > index_1.Count)
+                        index_1.Add(new List<(int LetterCode, int Id)>());
+
+                    index_1[j].Add(new(TextHelper.ToLetterCode(textList[i][j]), i));
+                    index_1[j] = index_1[j].OrderBy(x => x.LetterCode).ToList();
+                }
             }
 
             ConsoleUtils.WriteLine("Sample list initialized...", ConsoleColor.DarkGreen);
             ConsoleUtils.JumpLine();
 
-            var simpleSearchAlgorithm = new SimpleSearchAlgorithm(indexedSample, target);
-            var binarySearchAlgorithm = new BinarySearchAlgorithm(indexedSample, target);
+            if (target.Length > index_1.Count)
+            {
+                ConsoleUtils.WriteLine("Impossible to find target text", ConsoleColor.DarkYellow);
+            }
+            else
+            {
+                var simpleSearch = ExecuteSimpleSearch(index_1, target);
+                var binarySearch = ExecuteBinaryeSearch(index_1, target);
 
-            var result = ExecuteAlgorithm($"{nameof(SimpleSearchAlgorithm)}", simpleSearchAlgorithm);
-            ConsoleUtils.JumpLine();
-            ExecuteAlgorithm($"{nameof(BinarySearchAlgorithm)}", binarySearchAlgorithm, result.ExecutionTime.TotalMilliseconds);
-
+                Resume("TextSimpleSearch", simpleSearch.MatchesIds, simpleSearch.Operations, simpleSearch.TotalExecutionTime);
+                ConsoleUtils.JumpLine();
+                Resume("TextBinarySearch", binarySearch.MatchesIds, binarySearch.Operations, binarySearch.TotalExecutionTime, simpleSearch.Operations);
+            }
 
             Console.ReadKey();
             Console.Clear();
         }
 
-        private AlgorithmResult<int?> ExecuteAlgorithm(string name, AlgorithmBase<int?> algorithm, double? compare = null)
+        private List<string> GetTextList(string file)
         {
-            var result = algorithm.Execute();
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "TextBinarySearch", $"{file}.txt");
 
-            var found = result.Result != null;
-            var targetIndex = found ? result.Result.ToString() : "-";
-            ConsoleUtils.WriteLine($"[{name}] Result");
-            ConsoleUtils.WriteLine($"Found: {found}", found ? ConsoleColor.DarkGreen : ConsoleColor.DarkRed);
-            ConsoleUtils.WriteLine($"Target Index: {targetIndex}");
-            ConsoleUtils.WriteLine($"Operations: {result.Operations}");
-            ConsoleUtils.WriteLine($"Execution Time: {result.ExecutionTime.TotalMilliseconds} ms");
+            var list = File.ReadAllLines(path);
+            return list.ToList();
+        }
 
-            if (compare != null)
+        private (List<int> MatchesIds, int Operations, double TotalExecutionTime) ExecuteSimpleSearch(List<List<(int LetterCode, int Id)>> index_1, string target)
+        {
+            var results = new List<AlgorithmResult<(int MinIndex, int MaxIndex)?>>();
+            var matchedIds = new List<int>();
+            for (int i = 0, wordSize = target.Length; i < wordSize; i++)
             {
-                var baseTime = compare.Value;
-                var tookTime = result.ExecutionTime.TotalMilliseconds;
+                var tempSample = index_1[i].Select(x => x.LetterCode).ToList();
 
-                if (tookTime < baseTime)
+                var targetLetterCode = TextHelper.ToLetterCode(target[i]);
+                var simpleSearchRangedAlgorithm = new SimpleSearchRangedAlgorithm(tempSample, targetLetterCode);
+                var searchResult = simpleSearchRangedAlgorithm.Execute();
+
+                if (searchResult.Result == null)
                 {
-                    var p = Math.Round(baseTime / tookTime, 2);
-                    ConsoleUtils.WriteLine($"Execution Time Comparison: {compare.Value} ms --> {result.ExecutionTime.TotalMilliseconds} ms ({p}x faster)", ConsoleColor.Green);
+                    matchedIds = new List<int>();
+                    break;
+                }
+
+                results.Add(searchResult);
+                var rangedResult = searchResult.Result.Value;
+
+                if (i == 0)
+                {
+                    for (int matchedIndex = rangedResult.MinIndex, to = rangedResult.MaxIndex; matchedIndex <= to; matchedIndex++)
+                    {
+                        matchedIds.Add(index_1[i][matchedIndex].Id);
+                    }
                 }
                 else
                 {
-                    var p = Math.Round(tookTime / baseTime, 2);
-                    ConsoleUtils.WriteLine($"Execution Time Comparison: {compare.Value} ms --> {result.ExecutionTime.TotalMilliseconds} ms ({p}x slower)", ConsoleColor.Red);
+                    var tempNewMatchedIds = new List<int>();
+                    for (int matchedIndex = rangedResult.MinIndex, to = rangedResult.MaxIndex; matchedIndex <= to; matchedIndex++)
+                    {
+                        var id = index_1[i][matchedIndex].Id;
+
+                        if (matchedIds.Contains(id))
+                            tempNewMatchedIds.Add(id);
+                    }
+
+                    matchedIds = tempNewMatchedIds;
+                    if (matchedIds.Count == 0)
+                        break;
                 }
             }
 
-            return result;
+            return (matchedIds, results.Sum(r => r.Operations), results.Sum(r => r.ExecutionTime.TotalMilliseconds));
+        }
+
+        private (List<int> MatchesIds, int Operations, double TotalExecutionTime) ExecuteBinaryeSearch(List<List<(int LetterCode, int Id)>> index_1, string target)
+        {
+            var results = new List<AlgorithmResult<(int MinIndex, int MaxIndex)?>>();
+            var matchedIds = new List<int>();
+            for (int i = 0, wordSize = target.Length; i < wordSize; i++)
+            {
+                var tempSample = index_1[i].Select(x => x.LetterCode).ToList();
+
+                var targetLetterCode = TextHelper.ToLetterCode(target[i]);
+                var binarySearchRangedAlgorithm = new BinarySearchRangedAlgorithm(tempSample, targetLetterCode);
+                var searchResult = binarySearchRangedAlgorithm.Execute();
+
+                if (searchResult.Result == null)
+                {
+                    matchedIds = new List<int>();
+                    break;
+                }
+
+                results.Add(searchResult);
+                var rangedResult = searchResult.Result.Value;
+
+                if (i == 0)
+                {
+                    for (int matchedIndex = rangedResult.MinIndex, to = rangedResult.MaxIndex; matchedIndex <= to; matchedIndex++)
+                    {
+                        matchedIds.Add(index_1[i][matchedIndex].Id);
+                    }
+                }
+                else
+                {
+                    var tempNewMatchedIds = new List<int>();
+                    for (int matchedIndex = rangedResult.MinIndex, to = rangedResult.MaxIndex; matchedIndex <= to; matchedIndex++)
+                    {
+                        var id = index_1[i][matchedIndex].Id;
+
+                        if (matchedIds.Contains(id))
+                            tempNewMatchedIds.Add(id);
+                    }
+
+                    matchedIds = tempNewMatchedIds;
+                    if (matchedIds.Count == 0)
+                        break;
+                }
+            }
+
+            return (matchedIds, results.Sum(r => r.Operations), results.Sum(r => r.ExecutionTime.TotalMilliseconds));
+        }
+
+        private void Resume(string name, List<int> matchesIds, int operations, double executionTime, int? operationsToCompare = null)
+        {
+            var found = matchesIds.Any();
+            var targetIndex = found ? matchesIds[0].ToString() : "-";
+            executionTime = Math.Round(executionTime, 2);
+            ConsoleUtils.WriteLine($"[{name}] Result");
+            ConsoleUtils.WriteLine($"Found: {found}", found ? ConsoleColor.DarkGreen : ConsoleColor.DarkRed);
+            ConsoleUtils.WriteLine($"Target Index: {targetIndex}");
+            ConsoleUtils.WriteLine($"Operations: {operations}");
+            ConsoleUtils.WriteLine($"Execution Time: {executionTime} ms");
+
+            if (operationsToCompare != null)
+            {
+                var baseOperations = operationsToCompare.Value;
+
+                if (operations < baseOperations)
+                {
+                    var p = Math.Round(baseOperations / (operations * 1f), 2);
+                    ConsoleUtils.WriteLine($"Operations Comparison: {baseOperations} --> {operations} ({p}x faster)", ConsoleColor.Green);
+                }
+                else
+                {
+                    var p = Math.Round(operations / (baseOperations * 1f), 2);
+                    ConsoleUtils.WriteLine($"Operations Comparison: {baseOperations} --> {operations} ({p}x slower)", ConsoleColor.Red);
+                }
+            }
         }
     }
 }

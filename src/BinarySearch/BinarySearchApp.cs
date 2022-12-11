@@ -12,6 +12,7 @@ namespace BinarySearch
         {
             var menu = new ConsoleOptionsMenu<IApp>("Choose an Type to be executed:");
             menu.AddOption(new NumberBinarySearchApp());
+            menu.AddOption(new TextBinarySearchApp());
 
             IApp? app;
             while (true)

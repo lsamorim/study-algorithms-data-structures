@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using BinarySearch.Algorithms;
+using Common;
 
 namespace BinarySearch.SubApp
 {
@@ -30,7 +31,6 @@ namespace BinarySearch.SubApp
             var result = ExecuteAlgorithm($"{nameof(SimpleSearchAlgorithm)}", simpleSearchAlgorithm);
             ConsoleUtils.JumpLine();
             ExecuteAlgorithm($"{nameof(BinarySearchAlgorithm)}", binarySearchAlgorithm, result.ExecutionTime.TotalMilliseconds);
-            
 
             Console.ReadKey();
             Console.Clear();

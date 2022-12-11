@@ -1,4 +1,4 @@
-# Study: Algorithms and Data Structures
+# Algorithms and Data Structures
 Simple repository for my personal practices and studies
 
 Binary Search vs Simple Search comparison

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Common
+﻿namespace Common
 {
     public static class ConsoleUtils
     {
@@ -42,7 +36,21 @@ namespace Common
             Console.Write(text, args);
         }
 
-        public static int ReadNumber()
+        public static int ReadInteger()
+        {
+            var val = ReadNumber();
+            var number = string.IsNullOrEmpty(val) ? 0 : int.Parse(val);
+            return number;
+        }
+
+        public static long ReadLong()
+        {
+            var val = ReadNumber();
+            var number = string.IsNullOrEmpty(val) ? 0 : long.Parse(val);
+            return number;
+        }
+
+        private static string? ReadNumber()
         {
             var val = "";
             ConsoleKeyInfo key;
@@ -69,9 +77,7 @@ namespace Common
 
             JumpLine();
 
-            var number = string.IsNullOrEmpty(val) ? 0 : int.Parse(val);
-
-            return number;
+            return val;
         }
 
         public static void SetForegroundColor(ConsoleColor color)

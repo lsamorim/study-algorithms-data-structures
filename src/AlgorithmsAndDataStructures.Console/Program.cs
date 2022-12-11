@@ -11,8 +11,6 @@ namespace AlgorithmsAndDataStructures.ConsoleApp
 
         public static void Main(string[] args)
         {
-            // See https://aka.ms/new-console-template for more information
-
             ConsoleUtils.SetForegroundColor(ConsoleColor.White);
 
             var apps = new List<IApp>();
@@ -21,52 +19,16 @@ namespace AlgorithmsAndDataStructures.ConsoleApp
             var menu = new ConsoleOptionsMenu<IApp>("Choose an App to be executed:");
             menu.AddOptions(apps);
 
-            Option<IApp>? option;
-            do
+            IApp? app;
+            while (true)
             {
-                option = menu.PickAnOption(cleanAfter: true);
+                app = menu.PickAnOption(cleanAfter: true);
 
-                if (option != null)
-                {
-                    option.Result.Run();
-                }
+                if (app == null)
+                    break;
 
-            } while (option != null);
-
-            //var currentAppId = 0;
-            //do
-            //{
-            //    ConsoleUtils.WriteLine("Choose an App to be executed:", ConsoleColor.Cyan);
-            //    ConsoleUtils.JumpLine();
-
-            //    foreach (var option in apps)
-            //    {
-            //        var app = option.Value;
-            //        ConsoleUtils.WriteLine($"{option.Key} - {app.Name}: {app.Description}");
-            //    }
-            //    ConsoleUtils.WriteLine("0 - Exit");
-
-            //    ConsoleUtils.Write("Please type: ");
-            //    currentAppId = ConsoleUtils.ReadNumber();
-
-            //    if (currentAppId != 0)
-            //    {
-            //        if (apps.TryGetValue(currentAppId, out var app))
-            //        {
-            //            Console.Clear();
-            //            app.Run();
-            //        }
-            //        else
-            //        {
-            //            ConsoleUtils.JumpLine();
-            //            ConsoleUtils.WriteLine($"Invalid App Id: {currentAppId} - Please choose a valid option.", ConsoleColor.Red);
-            //            Console.ReadKey();
-            //        }
-
-            //        Console.Clear();
-            //    }
-
-            //} while (currentAppId > 0);
+                app.Run();
+            }
 
             ConsoleUtils.JumpLine();
             ConsoleUtils.WriteLine("Thanks for using this app. See you :)", ConsoleColor.White);

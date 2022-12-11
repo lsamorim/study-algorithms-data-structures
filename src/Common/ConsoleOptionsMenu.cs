@@ -1,17 +1,17 @@
 ﻿namespace Common
 {
-    public class ConsoleOptionsMenu<TResult>
+    public class ConsoleOptionsMenu<TOption>
     {
         private readonly string _greetings;
-        public Dictionary<int, Option<TResult>> Options { get; private set; }
+        public Dictionary<int, TOption> Options { get; private set; }
 
         public ConsoleOptionsMenu(string greetings)
         {
-            Options = new Dictionary<int, Option<TResult>>();
+            Options = new Dictionary<int, TOption>();
             _greetings = greetings;
         }
 
-        public void AddOptions(IEnumerable<TResult> options)
+        public void AddOptions(IEnumerable<TOption> options)
         {
             foreach (var option in options)
             {
@@ -19,18 +19,14 @@
             }
         }
 
-        public void AddOption(TResult option)
+        public void AddOption(TOption option)
         {
             var id = Options.Count + 1;
-            Options.Add(id, new Option<TResult>()
-            {
-                Id = id,
-                Result = option
-            });
+            Options.Add(id, option);
 
         }
 
-        public Option<TResult>? PickAnOption(bool cleanBefore = false, bool cleanAfter = false)
+        public TOption? PickAnOption(bool cleanBefore = false, bool cleanAfter = false)
         {
             int optionId = -1;
             while (optionId == -1)
@@ -43,12 +39,12 @@
 
                 foreach (var option in Options)
                 {
-                    ConsoleUtils.WriteLine($"{option.Key} - {option.Value.Result}");
+                    ConsoleUtils.WriteLine($"{option.Key} - {option.Value}");
                 }
                 ConsoleUtils.WriteLine("0 - Exit");
 
                 ConsoleUtils.Write("Please type: ");
-                optionId = ConsoleUtils.ReadNumber();
+                optionId = ConsoleUtils.ReadInteger();
 
                 if (optionId != 0)
                 {
@@ -64,8 +60,7 @@
             if (cleanAfter)
                 Console.Clear();
 
-            var optionResult = optionId == 0 ? null : Options[optionId];
-            return optionResult;
+            return optionId == 0 ? default : Options[optionId];
         }
     }
 

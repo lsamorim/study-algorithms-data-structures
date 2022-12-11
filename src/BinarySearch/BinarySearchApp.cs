@@ -13,19 +13,19 @@ namespace BinarySearch
             var menu = new ConsoleOptionsMenu<IApp>("Choose an Type to be executed:");
             menu.AddOption(new NumberBinarySearchApp());
 
-            Option<IApp>? option;
-            do
+            IApp? app;
+            while (true)
             {
                 Greet();
-                option = menu.PickAnOption(cleanAfter: true);
+                app = menu.PickAnOption(cleanAfter: true);
 
-                if (option != null)
-                {
-                    option.Result.Run();
-                }
+                if (app == null)
+                    break;
 
-                Console.Clear();
-            } while (option != null);
+                app.Run();
+            }
+
+            Console.Clear();
         }
     }
 }

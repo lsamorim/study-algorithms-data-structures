@@ -1,5 +1,6 @@
 ﻿using BinarySearch;
 using Common;
+using SelectionSort;
 using System;
 using System.Collections.Generic;
 
@@ -15,6 +16,7 @@ namespace AlgorithmsAndDataStructures.ConsoleApp
 
             var apps = new List<IApp>();
             apps.Add(new BinarySearchApp());
+            apps.Add(new SelectionSortApp());
 
             var menu = new ConsoleOptionsMenu<IApp>("Choose an App to be executed:");
             menu.AddOptions(apps);

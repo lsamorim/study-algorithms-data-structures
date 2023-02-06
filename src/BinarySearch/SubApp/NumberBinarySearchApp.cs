@@ -21,7 +21,7 @@ namespace BinarySearch.SubApp
 
             ConsoleUtils.JumpLine();
             ConsoleUtils.WriteLine("Initializing sample list...", ConsoleColor.DarkYellow);
-            var sample = (IReadOnlyList<int>)Enumerable.Range(1, sampleSize).ToList();
+            var sample = Enumerable.Range(1, sampleSize).ToArray();
             ConsoleUtils.WriteLine("Sample list initialized...", ConsoleColor.DarkGreen);
             ConsoleUtils.JumpLine();
 

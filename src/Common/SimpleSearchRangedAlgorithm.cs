@@ -2,10 +2,10 @@
 {
     public class SimpleSearchRangedAlgorithm : AlgorithmBase<(int MinIndex, int MaxIndex)?>
     {
-        private IReadOnlyList<int> _sample;
+        private int[] _sample;
         private int _target = 0;
 
-        public SimpleSearchRangedAlgorithm(IReadOnlyList<int> sample, int target)
+        public SimpleSearchRangedAlgorithm(int[] sample, int target)
         {
             _sample = sample;
             _target = target;
@@ -13,13 +13,13 @@
 
         protected override (int MinIndex, int MaxIndex)? ExecuteAlgorithm()
         {
-            if (_target < _sample[0] || _target > _sample[_sample.Count - 1])
+            if (_target < _sample[0] || _target > _sample[_sample.Length - 1])
                 return null;
 
             int? minIndex = null;
             int? maxIndex = null;
 
-            for (int i = 0, count = _sample.Count; i < count; i++)
+            for (int i = 0, count = _sample.Length; i < count; i++)
             {
                 base.RegisterOperation();
                 var guess = _sample[i];

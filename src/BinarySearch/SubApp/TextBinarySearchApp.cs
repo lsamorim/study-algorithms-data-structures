@@ -80,7 +80,7 @@ namespace BinarySearch.SubApp
             var matchedIds = new List<int>();
             for (int i = 0, wordSize = target.Length; i < wordSize; i++)
             {
-                var tempSample = index_1[i].Select(x => x.LetterCode).ToList();
+                var tempSample = index_1[i].Select(x => x.LetterCode).ToArray();
 
                 var targetLetterCode = TextHelper.ToLetterCode(target[i]);
                 var simpleSearchRangedAlgorithm = new SimpleSearchRangedAlgorithm(tempSample, targetLetterCode);
@@ -128,7 +128,7 @@ namespace BinarySearch.SubApp
             var matchedIds = new List<int>();
             for (int i = 0, wordSize = target.Length; i < wordSize; i++)
             {
-                var tempSample = index_1[i].Select(x => x.LetterCode).ToList();
+                var tempSample = index_1[i].Select(x => x.LetterCode).ToArray();
 
                 var targetLetterCode = TextHelper.ToLetterCode(target[i]);
                 var binarySearchRangedAlgorithm = new BinarySearchRangedAlgorithm(tempSample, targetLetterCode);

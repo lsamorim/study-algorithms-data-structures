@@ -7,10 +7,8 @@ namespace SelectionSort
         public override string Name => "Selection Sort";
         public override string Description => "Selection sort algorithm";
 
-        public override void Run()
+        protected override void Execute()
         {
-            Console.ReadKey();
-            Console.Clear();
         }
     }
 }

@@ -23,7 +23,6 @@
         {
             var id = Options.Count + 1;
             Options.Add(id, option);
-
         }
 
         public TOption? PickAnOption(bool cleanBefore = false, bool cleanAfter = false)
@@ -62,12 +61,5 @@
 
             return optionId == 0 ? default : Options[optionId];
         }
-    }
-
-    public class Option<TResult>
-    {
-        public int Id { get; set; }
-
-        public TResult Result { get; set; }
     }
 }

@@ -9,10 +9,8 @@ namespace BinarySearch.SubApp
 
         public override string Description => "Binary search algorithm - O(log n)";
 
-        public override void Run()
+        protected override void Execute()
         {
-            Greet();
-
             ConsoleUtils.Write("How many numbers to search in (sample size): ");
             var sampleSize = ConsoleUtils.ReadInteger();
 
@@ -31,9 +29,6 @@ namespace BinarySearch.SubApp
             var result = ExecuteAlgorithm($"{nameof(SimpleSearchAlgorithm)}", simpleSearchAlgorithm);
             ConsoleUtils.JumpLine();
             ExecuteAlgorithm($"{nameof(BinarySearchAlgorithm)}", binarySearchAlgorithm, result.ExecutionTime.TotalMilliseconds);
-
-            Console.ReadKey();
-            Console.Clear();
         }
 
         private AlgorithmResult<int?> ExecuteAlgorithm(string name, AlgorithmBase<int?> algorithm, double? compare = null)

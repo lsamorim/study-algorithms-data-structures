@@ -8,7 +8,7 @@ namespace BinarySearch
         public override string Name => "Binary Search";
         public override string Description => "Binary search algorithm - O(log n)";
 
-        public override void Run()
+        protected override void Execute()
         {
             var menu = new ConsoleOptionsMenu<IApp>("Choose an Type to be executed:");
             menu.AddOption(new NumberBinarySearchApp());
@@ -17,16 +17,13 @@ namespace BinarySearch
             IApp? app;
             while (true)
             {
-                Greet();
                 app = menu.PickAnOption(cleanAfter: true);
 
                 if (app == null)
                     break;
 
-                app.Run();
+                app.Run(cleanAfter: true);
             }
-
-            Console.Clear();
         }
     }
 }

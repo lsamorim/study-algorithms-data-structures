@@ -10,10 +10,8 @@ namespace BinarySearch.SubApp
 
         public override string Description => "Binary search algorithm - O(log n)";
 
-        public override void Run()
+        protected override void Execute()
         {
-            Greet();
-
             ConsoleUtils.Write("Type the text list to be used in search: ");
             var menu = new ConsoleOptionsMenu<string>("Choose an Type to be executed:");
             menu.AddOption("animals");
@@ -61,9 +59,6 @@ namespace BinarySearch.SubApp
                 ConsoleUtils.JumpLine();
                 Resume("TextBinarySearch", binarySearch.MatchesIds, binarySearch.Operations, binarySearch.TotalExecutionTime, simpleSearch.Operations);
             }
-
-            Console.ReadKey();
-            Console.Clear();
         }
 
         private List<string> GetTextList(string file)

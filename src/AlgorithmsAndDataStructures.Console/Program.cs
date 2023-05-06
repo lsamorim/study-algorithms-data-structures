@@ -2,34 +2,28 @@
 using Common;
 using SelectionSort;
 using System;
-using System.Collections.Generic;
 
 namespace AlgorithmsAndDataStructures.ConsoleApp
 {
     public class Program
     {
-        private static ConsoleColor _currentColor;
-
         public static void Main(string[] args)
         {
             ConsoleUtils.SetForegroundColor(ConsoleColor.White);
 
-            var apps = new List<IApp>();
-            apps.Add(new BinarySearchApp());
-            apps.Add(new SelectionSortApp());
-
             var menu = new ConsoleOptionsMenu<IApp>("Choose an App to be executed:");
-            menu.AddOptions(apps);
+            menu.AddOption(new BinarySearchApp());
+            menu.AddOption(new SelectionSortApp());
 
             IApp? app;
             while (true)
             {
-                app = menu.PickAnOption(cleanAfter: true);
+                app = menu.PickAnOption();
 
                 if (app == null)
                     break;
 
-                app.Run();
+                app.Run(cleanBefore: true, cleanAfter: true);
             }
 
             ConsoleUtils.JumpLine();

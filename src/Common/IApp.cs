@@ -6,6 +6,6 @@
 
         string Description { get; }
 
-        void Run();
+        void Run(bool cleanBefore = false, bool cleanAfter = false);
     }
 }
